@@ -1,4 +1,4 @@
-.. _plugin_update-label:
+.. _plugin-update-label:
 
 Обновление  плагина
 ====================
