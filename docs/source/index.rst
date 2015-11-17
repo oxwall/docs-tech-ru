@@ -6,6 +6,7 @@
 .. toctree::
     :maxdepth: 1
 
+    main_application_service
     routing
     data_base
     authorization
