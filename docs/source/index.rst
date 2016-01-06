@@ -8,6 +8,7 @@
 
     main_application_service
     routing
+    view_components
     data_base
     authorization
     cron
