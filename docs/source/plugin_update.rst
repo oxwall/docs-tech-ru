@@ -29,7 +29,7 @@
         <licenseUrl>http://www.oxwall.org/store/oscl</licenseUrl>
     </plugin>
 
-Мы нашли и исправили ошибку и теперь просто повышаем номер `билда <https://ru.wikipedia.org/wiki/%D0%A1%D0%B1%D0%BE%D1%80%D0%BA%D0%B0_%28%D0%BF%D1%80%D0%BE%D0%B3%D1%80%D0%B0%D0%BC%D0%BC%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%29>`_ в нашем **plugin.xml** c **1** до **2**. И наш результирующий файл стал выглядеть так:
+Мы нашли и исправили ошибку и теперь просто повышаем номер `билда <https://en.wikipedia.org/wiki/Software_build>`_ в нашем **plugin.xml** c **1** до **2**. И наш результирующий файл стал выглядеть так:
 
 .. code-block:: xml
 
