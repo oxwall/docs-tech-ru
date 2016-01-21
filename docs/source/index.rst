@@ -6,6 +6,7 @@
 .. toctree::
     :maxdepth: 1
 
+    application_lifecycle
     main_application_service
     routing
     view_components
