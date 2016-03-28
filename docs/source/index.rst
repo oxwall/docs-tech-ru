@@ -18,3 +18,4 @@
     plugin_structure
     plugin_update
     plugin_key
+    coding_standards
