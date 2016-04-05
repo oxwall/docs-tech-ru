@@ -19,3 +19,4 @@
     plugin_update
     plugin_key
     coding_standards
+    debug_tools
