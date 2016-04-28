@@ -19,6 +19,8 @@
 
         $authorization = OW::getAuthorization();
         $authorization->addGroup('superplugin');
+
+        // actions are optional
         $authorization->addAction('superplugin', 'view_items');
         $authorization->addAction('superplugin', 'edit_items');
         $authorization->addAction('superplugin', 'delete_items');
@@ -27,7 +29,11 @@
 Далее к созданной группе добавляем список действий которые в дальнейшем будем использовать к примеру
 для проверки прав пользователей просматривать, редактировать, удалять контент итд.
 
-Далее нам нужно добавить описание добавленных действий для того, чтобы пользователи и администратор сайта смогли понять за, что отвечают эти действия.
+Следует отметить, что список действий на самом деле не является обязательным, вы можете зарегистрировать только одну группу авторизации без списка действий,
+а затем проверять всю группу целиком (ниже описан способ как это проверить).
+
+Но если вы все таки решили создать список действий тот вам нужно
+добавить описание добавленных действий для того, чтобы пользователи и администратор сайта смогли понять за, что отвечают эти действия.
 Для этого нам нужно подписаться на системное событие в файле - **classes/event_handler.php** (подробнее в разделе - :ref:`system-vents-label`) и вернуть описания действий:
 
 .. code-block:: php
@@ -89,4 +95,20 @@
             // get error message
             $errorMessage = BOL_AuthorizationService::getInstance()->getActionStatus('superplugin', 'view_items');
             throw new AuthorizationException($errorMessage['msg']);
+        }
+
+Если вы хотите проверить является ли текущий пользователь модератором (т.е человеком которому разрешены все действия в группе авторизации)
+можно сделать проверку не указывая конкретного действия, к примеру:
+
+.. code-block:: php
+
+    <?php
+
+        // is current user a moderator of the "superplugin" ?
+        $isModerator = OW::getUser()->isAuthorized('superplugin');
+
+        // a person who allowed to do any actions in the "superplugin" auth group
+        if ( $isModerator )
+        {
+            // do some logic
         }
