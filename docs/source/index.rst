@@ -13,6 +13,7 @@
     bol
     authorization
     cron
+    system_events
     language
     widget
     plugin_structure
