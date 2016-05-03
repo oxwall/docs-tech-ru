@@ -10,6 +10,7 @@
     main_application_service
     routing
     view_components
+    forms
     bol
     authorization
     cron
