@@ -154,7 +154,7 @@
         // is current user a moderator of the "superplugin" ?
         $isModerator = OW::getUser()->isAuthorized('superplugin');
 
-        // a person who allowed to do any actions in the "superplugin" auth group
+        // is it an content owner or a moderator?
         if ( $isContentOwner || $isModerator )
         {
             // do some logic
