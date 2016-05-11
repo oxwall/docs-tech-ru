@@ -13,28 +13,30 @@
 Регистрация списка действий плагина производится в файле **install.php** (подробнее в разделе - :ref:`plugin-structure-label`).
 Ниже приведен пример регистрации нескольких действий:
 
+**install.php**
+
 .. code-block:: php
 
     <?php
 
         $authorization = OW::getAuthorization();
+
         $authorization->addGroup('superplugin');
 
-        // actions are optional
         $authorization->addAction('superplugin', 'view_items');
         $authorization->addAction('superplugin', 'edit_items');
         $authorization->addAction('superplugin', 'delete_items');
 
-В приведенном примере при установке плагина мы создаем новую группу авторизации - **superplugin**.
+В приведенном примере при установке плагина мы создаем новую группу авторизации - **superplugin**
+(название группы авторизации должно совпадать с ключем плагина описанным в plugin.xml).
 Далее к созданной группе добавляем список действий которые в дальнейшем будем использовать к примеру
 для проверки прав пользователей просматривать, редактировать, удалять контент итд.
 
-Следует отметить, что список действий на самом деле не является обязательным, вы можете зарегистрировать только одну группу авторизации без списка действий,
-а затем проверять всю группу целиком (ниже описан способ как это проверить).
+После регистрации списка действий нужно
+добавить для них описание для того, чтобы пользователи и администратор сайта смогли понять за, что отвечают эти действия.
+Для этого нам нужно подписаться на системное событие в файле - **classes/event_handler.php** (подробнее в разделе - :ref:`system-vents-label`) и вернуть описания этих действий:
 
-Но если вы все таки решили создать список действий тот вам нужно
-добавить описание добавленных действий для того, чтобы пользователи и администратор сайта смогли понять за, что отвечают эти действия.
-Для этого нам нужно подписаться на системное событие в файле - **classes/event_handler.php** (подробнее в разделе - :ref:`system-vents-label`) и вернуть описания действий:
+**classes/event_handler.php**
 
 .. code-block:: php
 
@@ -42,6 +44,34 @@
 
         class MYSUPERPLUGIN_CLASS_EventHandler
         {
+            /**
+             * Class instance
+             *
+             * @var MYSUPERPLUGIN_CLASS_EventHandler
+             */
+            private static $classInstance;
+
+            /**
+             * Class constructor
+             */
+            private function __construct()
+            {}
+
+            /**
+             * Get instance
+             *
+             * @return MYSUPERPLUGIN_CLASS_EventHandler
+             */
+            public static function getInstance()
+            {
+                if ( self::$classInstance === null )
+                {
+                    self::$classInstance = new self();
+                }
+
+                return self::$classInstance;
+            }
+
             /**
              * Generic init (should be started for all contexts such as: mobile, desktop, cli and api)
              *
@@ -78,6 +108,16 @@
              }
         }
 
+В файле **init.php**  который запускается при каждом запросе от клиента, запускаем метод который подписывается на системные события:
+
+**init.php**
+
+.. code-block:: php
+
+    <?php
+
+        MYSUPERPLUGIN_CLASS_EventHandler::getInstance()->genericInit();
+
 Проверка прав пользователей
 ---------------------------
 
@@ -90,15 +130,22 @@
         // is view items allowed for current user ?
         $isViewAllowed = OW::getUser()->isAuthorized('superplugin', 'view_items');
 
-        if ( !isViewAllowed )
+        if ( !$isViewAllowed )
         {
             // get error message
             $errorMessage = BOL_AuthorizationService::getInstance()->getActionStatus('superplugin', 'view_items');
             throw new AuthorizationException($errorMessage['msg']);
         }
 
-Если вы хотите проверить является ли текущий пользователь модератором (т.е человеком которому разрешены все действия в группе авторизации)
-можно сделать проверку не указывая конкретного действия, к примеру:
+Модераторы
+----------
+
+Модераторы эта группа пользователей которых назначает администратор сайта в админ панели. Администратор сайта может
+разрешить управлять одним и более плагином, что в свою очередь значит, что модератору
+будут разрешены любые действия в плагине по управлению контентом пользователей.
+
+
+Пример кода который проверяет является ли текущий пользователь модератором:
 
 .. code-block:: php
 
@@ -107,8 +154,8 @@
         // is current user a moderator of the "superplugin" ?
         $isModerator = OW::getUser()->isAuthorized('superplugin');
 
-        // a person who allowed to do any actions in the "superplugin" auth group
-        if ( $isModerator )
+        // is it an content owner or a moderator?
+        if ( $isContentOwner || $isModerator )
         {
             // do some logic
         }
